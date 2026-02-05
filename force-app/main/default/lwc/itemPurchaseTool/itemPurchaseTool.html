@@ -1,3 +1,67 @@
 <template>
-  <!-- Add your HTML template here -->
+    <lightning-card>
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col">
+                    <lightning-button label="Create Item" onclick={handleCreateItem} if:true={isManager}></lightning-button>
+                </div>
+                <div class="slds-col">
+                    <div class="slds-text-heading_small">Account Name: {accountName}</div>
+                    <div class="slds-text-body_small">Account Number: {accountNumber}</div>
+                    <div class="slds-text-body_small">Account Industry: {accountIndustry}</div>
+                </div>
+                <div class="slds-col slds-text-align_right">
+                    <lightning-button label="Cart" onclick={handleOpenCart}></lightning-button>
+                </div>
+            </div>
+
+            <lightning-input type="search" label="SEARCH" value={searchKey} onchange={handleSearch} class="slds-m-bottom_medium"></lightning-input>
+
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_3-of-4">
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <template for:each={items} for:item="item">
+                            <div key={item.Id} class="slds-col slds-size_1-of-2 slds-m-bottom_medium">
+                                <lightning-card>
+                                    <div class="slds-p-around_small">
+                                        <div class="slds-text-heading_small">{item.Name}</div>
+                                        <div class="slds-text-body_small">{item.Description__c}</div>
+                                        <img src={item.Image__c} alt={item.Name} class="item-image" if:true={item.Image__c} />
+                                        <div class="slds-m-top_small">
+                                            <lightning-button label="Details" data-id={item.Id} onclick={handleDetails}></lightning-button>
+                                            <lightning-button label="Add" data-id={item.Id} onclick={handleAddToCart} class="slds-m-left_small"></lightning-button>
+                                        </div>
+                                    </div>
+                                </lightning-card>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-4">
+                    <lightning-card title="FILTERS">
+                        <div class="slds-p-around_small">
+                            <div class="slds-m-bottom_medium">
+                                <div class="slds-text-heading_small">Count: {itemCount}</div>
+                            </div>
+                            <lightning-combobox label="Type:" options={typeOptions} value={selectedType} onchange={handleTypeChange}></lightning-combobox>
+                            <lightning-combobox label="Family:" options={familyOptions} value={selectedFamily} onchange={handleFamilyChange}></lightning-combobox>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+
+    <template if:true={showItemModal}>
+        <c-item-details-modal item={selectedItem} onclose={handleCloseItemModal}></c-item-details-modal>
+    </template>
+
+    <template if:true={showCartModal}>
+        <c-cart-modal cart={cart} total={cartTotal} onclose={handleCloseCartModal} oncheckout={handleCheckout}></c-cart-modal>
+    </template>
+
+    <template if:true={showCreateItemModal}>
+        <c-create-item-modal onclose={handleCloseCreateItemModal} onitemcreated={handleItemCreated}></c-create-item-modal>
+    </template>
 </template>
